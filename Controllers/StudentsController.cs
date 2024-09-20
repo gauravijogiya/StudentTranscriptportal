@@ -48,21 +48,17 @@ namespace StudentTranscriptPortal.Controllers
         // POST: api/students
         [HttpPost]
        // [Authorize]
-        public async Task<IActionResult> PostStudent([FromForm] Student student,  IFormFile transcriptFile)
-        // public async Task<IActionResult> PostStudent(Student student)
+       // public async Task<IActionResult> PostStudent([FromForm] Student student, [FromForm] IFormFile transcriptFile)
+        public async Task<IActionResult> PostStudent(Student student)
         {
+            var transcriptFile = student.Transcript; ;
             // Server-side validation for transcript
             if (transcriptFile == null || transcriptFile.Length == 0)
             {
                 return BadRequest("Transcript is required.");
             }
 
-            // Check if the transcript is a PDF
-            //if (student.transcriptFile.ContentType != "application/pdf")
-            //{
-            //    return BadRequest("Only PDF files are allowed.");
-            //}
-
+            
             if (ModelState.IsValid)
             {
                 Uploadhandler uploadhandler = new Uploadhandler(student.Name,transcriptFile);
@@ -88,8 +84,7 @@ namespace StudentTranscriptPortal.Controllers
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
                // var filePath = Path.Combine(Path.Combine(Directory.GetCurrentDirectory(), "Uploads"), fileName);
                 student.TranscriptPath = filePath;
-                student.Name = "bb";
-
+               
                 // Save the student to the database
                 _context.Students.Add(student);
 

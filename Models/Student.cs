@@ -26,6 +26,7 @@ namespace StudentTranscriptPortal.Models
         [Column(TypeName = "nvarchar(150)")]
         
         public string ? TranscriptPath { get; set; }
-       // public IFormFile transcriptFile { get; set; }
+        [NotMapped]
+        public IFormFile Transcript{ get; set; }
     }
 }
