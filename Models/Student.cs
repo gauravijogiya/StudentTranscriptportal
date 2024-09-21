@@ -22,7 +22,7 @@ namespace StudentTranscriptPortal.Models
 
         [Required]
         [Column(TypeName = "nvarchar(150)")]
-        public string TranscriptTitle { get; set; }  // This could be file upload logic in a more advanced app
+        public string TranscriptYear { get; set; }  // This could be file upload logic in a more advanced app
         [Column(TypeName = "nvarchar(150)")]
         
         public string ? TranscriptPath { get; set; }

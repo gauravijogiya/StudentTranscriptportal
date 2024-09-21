@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StudentTranscriptPortal.Data;
 using StudentTranscriptPortal.Helpers;
+using StudentTranscriptPortal.Implements;
+using StudentTranscriptPortal.Services;
 using System.Diagnostics;
 
 
@@ -17,6 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<StudentContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
+builder.Services.AddTransient<IStudentService, StudentService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DuluxCoarsPolicy",

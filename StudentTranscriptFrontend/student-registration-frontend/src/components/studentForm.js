@@ -6,7 +6,7 @@ import * as Yup from "yup";
 
 const StudentForm = () => {
   const [submitStatus, setSubmitStatus] = useState(null); // To display success/error messages
-const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
+//const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
   // Define the validation schema using Yup
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -15,8 +15,11 @@ const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
     email: Yup.string()
       .required("Email is required")
       .email("Email is invalid"),
-    contactNumber:Yup.string()
-    .required("contactNumber is required"),
+    contactNumber:Yup.number()
+    .positive("A phone number can't start with a minus")
+    .integer("A phone number can't include a decimal point")
+    .min(10)
+    .required('A phone number is required'),
     //.matches(phoneString),
     transcriptYear: Yup.string()
       //.required("Last year is required")
@@ -27,12 +30,12 @@ const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
       .test(
         "fileType",
         "Only PDF files are accepted",
-        (value) => value && value[0] && value[0].type === "application/pdf"
+        (value) => value && value[0] && value[0].type === "application/pdf" //||"image/jpeg"||"image/png"
       )
       .test(
         "fileSize",
-        "File size should be less than 5MB",
-        (value) => value && value[0] && value[0].size <= 5242880
+        "File size should be less than 10MB",
+        (value) => value && value[0] && value[0].size <= 10458760
       ),
   });
 
@@ -47,9 +50,7 @@ const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
 
   // Function to generate JWT Token (for testing purposes)
   const generateTestToken = () => {
-    // Ideally, tokens should be obtained via a secure authentication process
-    // Here, we're using a hardcoded token for demonstration
-    return "your_jwt_token_here"; // Replace with a valid JWT
+        return "your_jwt_token_here"; // Replace with a valid JWT
   };
 
   const onSubmit = async (data) => {
@@ -64,8 +65,12 @@ const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
 
     try {
       const token = generateTestToken(); // Obtain JWT Token
+      for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
+        console.log("token"+token);
+      }
       const response = await axios.post(
-        "https://localhost:5001/api/students/register", 
+        "https://localhost:7166/api/Students", 
         formData,
         {
           headers: {
@@ -74,8 +79,9 @@ const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
           },
         }
       );
-
-      setSubmitStatus({ success: true, message: response.data.message });
+      //console.log(response);
+      let {name,email}=response.data;
+      setSubmitStatus({ success: true, message: "Thank you "+name+" for submitting your Transcript ." });
       reset(); // Reset form fields
     } catch (error) {
       let message = "An error occurred. Please try again.";
@@ -171,8 +177,7 @@ const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
             className={`mt-3 alert ${
               submitStatus.success ? "alert-success" : "alert-danger"
             }`}
-            role="alert"
-          >
+            role="alert">
             {submitStatus.message}
           </div>
         )}

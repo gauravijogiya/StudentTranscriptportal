@@ -6,13 +6,22 @@ namespace StudentTranscriptPortal.Helpers
 {
     public class Uploadhandler(String studentName,IFormFile file) 
     {
+        List<string> lstValidExtensions = new List<string>() { ".pdf", ".jpg", ".png" };
+        public bool checkExtension(string fileName)
+        {            
+            string extension = Path.GetExtension(file.FileName);
+
+            if (!lstValidExtensions.Contains(extension))
+            {
+                return false;
+            }
+            return true;
+        }
         public string Upload(IFormFile file)
         {
             //check for extension
-            List<string> lstValidExtensions = new List<string>() { ".pdf", ".jpg", ".png" };
-            string extension = Path.GetExtension(file.FileName);
-           
-            if (!lstValidExtensions.Contains(extension))
+                     
+            if (!checkExtension(file.FileName))
             {
                 return $"Extention is not valid ("+string.Join(',', lstValidExtensions) +")";
             }
@@ -22,12 +31,6 @@ namespace StudentTranscriptPortal.Helpers
             if (filesize > (10 * 1014 * 1024)) {
                 return $"MAximum allowed size is 10MB"; 
             }
-
-            //SavingFile
-            //    string fileName = file.FileName + extension;
-            //    string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            //    using FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create);
-            //file.CopyTo(stream);
             // Define the path to store the uploaded transcript
             var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
             if (!Directory.Exists(uploadsPath))
@@ -50,8 +53,9 @@ namespace StudentTranscriptPortal.Helpers
 
             }
         }
+    
 
+}
 
-    }
     
 

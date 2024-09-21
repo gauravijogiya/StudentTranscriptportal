@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="StudentTranscriptFrontend\" />
+    <Folder Include="Uploads\" />
   </ItemGroup>
 
 </Project>
