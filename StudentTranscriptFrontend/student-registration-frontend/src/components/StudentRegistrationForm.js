@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 const StudentRegistrationForm = () => {
     const [StudentId, setStudentId] = useState(1);
@@ -48,8 +50,18 @@ const StudentRegistrationForm = () => {
 
 <div className="row mb-3">    
     <label for="formGroupExampleInput" className="col-sm-2 col-form-label">ContactNumber</label>
+    <div className="col-sm-4"></div>
     <div className="col-sm-10">
-    <input type="text" className="form-ontrol" value={contactNumber} onChange={(e) => setcontactNumber(e.target.value)} required />
+    <PhoneInput
+  country={'us'}
+  value={this.state.contactNumber} inputProps={{
+    name: 'contactNumber',
+    required: true,
+    autoFocus: true
+  }}
+  onChange={contactNumber => this.setState({ contactNumber })}
+/>
+    {/* <input type="text" className="form-ontrol" value={contactNumber} onChange={(e) => setcontactNumber(e.target.value)} required /> */}
     </div>  
 </div>
   
