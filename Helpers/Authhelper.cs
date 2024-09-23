@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using StudentTranscriptPortal.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -7,22 +8,29 @@ namespace StudentTranscriptPortal.Helpers
 {
     public class Authhelper
     {
-        public static string GenerateToken(string key, string issuer, string audience, int expireMinutes = 30)
+        private  readonly IConfiguration _configuration;
+
+        public Authhelper(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        public string GenerateToken(User user)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "TestUser"),  // Subject (could be the username)
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),  // Subject (could be the username)
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())  // Unique identifier
             };
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer,
-                audience,
-                claims,
-                expires: DateTime.Now.AddMinutes(expireMinutes),
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
             Console.WriteLine("Token generation process reached"); // Check if the code reaches this point
             Console.WriteLine(token);  // Output token to console

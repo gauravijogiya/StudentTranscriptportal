@@ -20,13 +20,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<StudentContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
 builder.Services.AddTransient<IStudentService, StudentService>();
+builder.Services.AddTransient<IUserLoginService, UserLoginService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DuluxCoarsPolicy",
                           policy =>
                           {
                               policy.WithOrigins("http://localhost:3000",
-                                                  "http://localhost:5000")
+                                                  "http://localhost:7166")
                                                   .AllowAnyHeader()
                                                   .AllowAnyMethod();
                           });
@@ -76,12 +77,12 @@ app.UseAuthorization();  // Enable Authorization
 app.UseCors("DuluxCoarsPolicy");
 
 app.MapControllers();
-// Generate JWT token for testing (Remove this later in production)
-var token = Authhelper.GenerateToken(
-    builder.Configuration["Jwt:Key"],
-    builder.Configuration["Jwt:Issuer"],
-    builder.Configuration["Jwt:Audience"]);
-Debug.WriteLine($"JWT Token: {token}"); // Output token to console
+//// Generate JWT token for testing (Remove this later in production)
+//var token = Authhelper.GenerateToken(
+//    builder.Configuration["Jwt:Key"],
+//    builder.Configuration["Jwt:Issuer"],
+//    builder.Configuration["Jwt:Audience"]);
+//Debug.WriteLine($"JWT Token: {token}"); // Output token to console
 
 
 app.Run();

@@ -25,7 +25,7 @@ namespace StudentTranscriptPortal.Controllers
 
         // GET api/<StudentsController>/5
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Student>> GetStudentDetail(int id)
         {
             var studentDetail = await _service.GetStudentDetail(id);
@@ -39,8 +39,7 @@ namespace StudentTranscriptPortal.Controllers
         }
         // POST: api/students
         [HttpPost]
-       // [Authorize]
-       // public async Task<IActionResult> PostStudent([FromForm] Student student, [FromForm] IFormFile transcriptFile)
+        [Authorize]
         public async Task<IActionResult> PostStudent(Student student)
         {
             var transcriptFile = student.Transcript; ;
@@ -57,7 +56,7 @@ namespace StudentTranscriptPortal.Controllers
                 if (data.ResponseCode == 422) {
                     return BadRequest(data.Message);
                 }
-                return Ok(data.Message);
+                return Ok(data);
             }
             return BadRequest(ModelState);
 

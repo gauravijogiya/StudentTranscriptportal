@@ -15,3 +15,42 @@ label{
   display: flex;
   padding: 3px;
 }
+html, body {
+    font-family: "Lato-Regular", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    position: relative;
+    color: #767676;
+}
+
+
+#headerLogo {
+  overflow: hidden;
+  
+  padding: 20px 10px;
+}
+
+/* Style the header links */
+#headerLogo a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+
+/* Add media queries for responsiveness - when the screen is 500px wide or less, stack the links on top of each other */
+@media screen and (max-width: 500px) {
+  #headerLogo a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  #headerLogo-right {
+    float: none;
+  }
+}

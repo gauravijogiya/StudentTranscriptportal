@@ -6,7 +6,7 @@ import * as Yup from "yup";
 
 const StudentForm = () => {
   const [submitStatus, setSubmitStatus] = useState(null); // To display success/error messages
-//const phoneString="\^\d(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$";
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   // Define the validation schema using Yup
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -15,23 +15,29 @@ const StudentForm = () => {
     email: Yup.string()
       .required("Email is required")
       .email("Email is invalid"),
-    contactNumber:Yup.number()
-    .positive("A phone number can't start with a minus")
-    .integer("A phone number can't include a decimal point")
+    contactNumber:Yup.string()
+    .required('A phone number is required')
+    .matches(phoneRegExp, "Enter a valid  phone number")
+    .max(10, "Number cannot exceed 10 characters")
     .min(10)
-    .required('A phone number is required'),
+    ,
     //.matches(phoneString),
     transcriptYear: Yup.string()
-      //.required("Last year is required")
+      .required("Transcript Year is required")
       .matches(/^\d{4}$/, "Enter a valid year")
       .test((value)=>value<=new Date().getFullYear()),
+
     transcript: Yup.mixed()
-      .required("Transcript is required")
+    .test("file", "You need to provide a file", (value) => {
+      if (value.length > 0) {  
+        return true;
+      }
+      return false;
+      })
       .test(
         "fileType",
         "Only PDF files are accepted",
-        (value) => value && value[0] && value[0].type === "application/pdf" //||"image/jpeg"||"image/png"
-      )
+        (value) => value && value[0] && value[0].type === "application/pdf")
       .test(
         "fileSize",
         "File size should be less than 10MB",
@@ -64,11 +70,15 @@ const StudentForm = () => {
 
 
     try {
-      const token = generateTestToken(); // Obtain JWT Token
-      for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
-        console.log("token"+token);
+       for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]);        
       }
+
+      const token = localStorage.getItem('token');
+      console.log("token"+token);
+      //   if (token) {
+      //     config.headers['Authorization'] = `Bearer ${token}`;
+      //   }
       const response = await axios.post(
         "https://localhost:7166/api/Students", 
         formData,
@@ -79,9 +89,10 @@ const StudentForm = () => {
           },
         }
       );
-      //console.log(response);
-      let {name,email}=response.data;
-      setSubmitStatus({ success: true, message: "Thank you "+name+" for submitting your Transcript ." });
+      console.log(formData);
+      console.log(response);
+      let {message}=response.data;
+      setSubmitStatus({ success: true, message: message });
       reset(); // Reset form fields
     } catch (error) {
       let message = "An error occurred. Please try again.";
@@ -93,11 +104,12 @@ const StudentForm = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Student Registration Form</h2>
+    <div className="container mt-4">
+      <h5>Student Registration Form</h5>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <div className="row">
         {/* Name Field */}
-        <div className="form-group mb-3">
+        <div className="form-group col-6 mb-3">
           <label htmlFor="name">Name</label>
           <input
             id="name"
@@ -109,7 +121,7 @@ const StudentForm = () => {
           <div className="invalid-feedback">{errors.name?.message}</div>
         </div>
         {/*contactNumber Field */}
-        <div className="form-group mb-3">
+        <div className="form-group col-6 mb-3">
           <label htmlFor="contactNumber">ContactNumber</label>
           <input
             id="contactNumber"
@@ -120,7 +132,7 @@ const StudentForm = () => {
           />
           <div className="invalid-feedback">{errors.contactNumber?.message}</div>
         </div>
-
+        </div>
         {/* Email Field */}
         <div className="form-group mb-3">
           <label htmlFor="email">Email</label>
